@@ -1,0 +1,26 @@
+Table Entrees {
+  id int [pk, increment]
+  name varchar
+  price decimal
+}
+
+Table Vegetables {
+    id int [pk, increment]
+    type varchar
+    price decimal
+}
+
+Table Sides {
+    id int [pk, increment]
+    title varchar
+    price decimal
+}
+
+Table Orders {
+    id int [pk, increment]
+    entree_id int [ref: > Entrees.id]
+    vegetable_id int [ref: > Vegetables.id]
+    side_id int [ref: > Sides.id]
+    total_cost decimal
+    order_date datetime
+}
