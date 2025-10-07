@@ -1,0 +1,89 @@
+title <size:30> <color:#b7410e>🍋 House of Hummus Project Flow
+
+frame #f5deb3 Cozy Kitchen Modules
+
+participantgroup #ffe4b5 **🥙 Core App Files**
+  participant index.html
+  participant main.js
+  participant FoodTruck.js
+end
+
+participantgroup #ffdab9 **🍲 Menu & Data Modules**
+  participant Entrees.js
+  participant Vegetables.js
+  participant Sides.js
+  participant Sales.js
+end
+
+participantgroup #fff8dc **🍋 State & Events**
+  participant TransientState.js
+  participant Order.js
+end
+
+participantgroup #fffacd **📦 JSON Server**
+  participant database.json
+end
+
+note over index.html #fdf5e6: **Render Target** — Contains the #container element\nwhere all dynamic HTML appears.
+
+note over main.js #fff8dc: Imports <color:#b7410e>FoodTruck()</color> and renders app.\nListens for <color:#b7410e>"stateChanged"</color> events to re-render.
+
+index.html-#b7410e>main.js: **load scripts**
+main.js-#cd853f>FoodTruck.js: import **FoodTruck()**
+FoodTruck.js-#cd853f>Sales.js: import **Sales()** function
+Sales.js--#cd853f>FoodTruck.js: here is **Sales()** function
+FoodTruck.js-#cd853f>Entrees.js: import **Entrees()**
+Entrees.js-#cd853f>TransientState.js: import **setEntree()** function
+TransientState.js--#cd853f>Entrees.js: here is **setEntree()**
+Entrees.js--#cd853f>FoodTruck.js: here is **Entrees()** function
+FoodTruck.js-#cd853f>Vegetables.js: import **Veggies()**
+Vegetables.js-#cd853f>TransientState.js: import **setVegetable()** function
+TransientState.js--#cd853f>Vegetables.js: here is **setVegetable()**
+Vegetables.js--#cd853f>FoodTruck.js: here is **Veggies()** function
+FoodTruck.js-#cd853f>Sides.js: import **Sides()**
+Sides.js-#cd853f>TransientState.js: import **setSide()** function
+TransientState.js--#cd853f>Sides.js: here is **setSide()**
+Sides.js--#cd853f>FoodTruck.js: here is **Sides()** function
+FoodTruck.js-#cd853f>Order.js: import **handlePurchaseClick()** function
+Order.js-#cd853f>TransientState.js: import **placeOrder()** function
+TransientState.js --#cd853f> Order.js: here is **placeOrder()** function
+Order.js --#cd853f> FoodTruck.js: here is **handlePurchaseClick()** function 
+FoodTruck.js--#cd853f>main.js: here is **FoodTruck()** function
+
+note over FoodTruck.js #ffe4b5: Calls <color:#b7410e>Sales(), Sides(), Entrees()</color>\nand <color:#b7410e>Veggies()</color> to fetch data.
+
+FoodTruck.js-#cd853f>Sales.js: **Sales()**
+Sales.js-#b7410e>database.json: GET /purchases
+database.json--#b7410e>Sales.js: JSON list of sales
+Sales.js--#cd853f>FoodTruck.js: formatted sales HTML
+
+FoodTruck.js -#d2691e> Entrees.js: **Entrees()**
+Entrees.js-#d2691e>Database.json: GET /entrees
+Database.json --#b7410e> Entrees.js: response /entrees
+Entrees.js--#d2691e>FoodTruck.js: entree options HTML
+FoodTruck.js -#d2691e> Vegetables.js: **Veggies()**
+Vegetables.js-#d2691e>Database.json: GET /vegetables
+Database.json --#d2691e> Vegetables.js: respone /vegetables
+Vegetables.js--#d2691e>FoodTruck.js: veggie options HTML
+FoodTruck.js -#d2691e> Sides.js: **Sides()**
+Sides.js-#d2691e>Database.json: GET /sides
+Database.json --#d2691e> Sides.js: response /sides
+Sides.js--#d2691e>FoodTruck.js: side options HTML
+note over FoodTruck.js #f5deb3: Renders all menu options\nfrom <color:#b7410e>Entrees, Vegetables, Sides</color>
+FoodTruck.js--#cd853f>main.js: HTML string for full app
+main.js --#cd853f> index.html: **renderAllHTML()** invoked
+
+note over TransientState.js #fff8dc: Stores <color:#b7410e>selected entreeId, vegetableId, sideId</color> in memory.\nCleared when order is placed.
+
+FoodTruck.js-#8b4513>TransientState.js: setEntree(), setVegetable(), setSide()
+
+note over Order.js #ffe4b5: Handles **“Purchase Combo”** button clicks.\nCalls <color:#b7410e>placeOrder()</color> to POST new purchase.
+index.html-#cd853f>Order.js: click event → handlePurchaseClick()
+Order.js-#b7410e>TransientState.js: placeOrder()
+TransientState.js-#8b4513>database.json: POST /purchases
+database.json--#8b4513>TransientState.js: confirmation + new record
+TransientState.js--#cd853f>Order.js: success
+Order.js--#cd853f>main.js: dispatch "stateChanged" → trigger re-render
+main.js-#cd853f>FoodTruck.js: re-render with updated purchases
+
+note over index.html #fff8dc: User now sees updated **Monthly Sales** list\nwith the new <color:#b7410e>“Receipt #x = $00.00”</color> entry.
